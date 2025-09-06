@@ -15,19 +15,19 @@ LEVELS = [
         "NAME": "Джуниор", 
         "DIFFICULTY": 1, 
         "HEALTH": 100, 
-        "SPEED": 2
+        "SPEED": 60
     },
     {
         "NAME": "Миддл", 
         "DIFFICULTY": 2, 
         "HEALTH": 150, 
-        "SPEED": 3
+        "SPEED": 90
     },
     {
         "NAME": "Сеньор", 
         "DIFFICULTY": 3, 
         "HEALTH": 200, 
-        "SPEED": 4
+        "SPEED": 120
     }
 ]
 
@@ -39,5 +39,23 @@ COLORS = {
     "DARK_SKY": (25, 25, 112),
     "GRASS": (0, 102, 51),
     "CHILL_RED": (220, 53, 69),
-    "DARK_RED": (200, 35, 51)
+    "DARK_RED": (200, 35, 51),
+    "GREEN": (0, 255, 100),
+    "RED": (255, 50, 50),
+    "SHADOW_COLOR": (0, 0, 0, 100)
 }
+
+PARALLAX_STRENGTH = 0.05
+
+SMOOTH_FACTOR = 0.1
+
+PATHS = {
+    "BGS": "img/bg/",
+    "ENEMIES": "img/enemy/",
+    "MUSIC": "music/",
+    "IMG": "img/"
+}
+
+TIMING = 0.2
+
+DAMAGE = 10

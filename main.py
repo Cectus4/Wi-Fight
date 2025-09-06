@@ -309,10 +309,7 @@ def draw_rhythm_indicator():
     # Рисуем круг ритма в центре
     pygame.draw.circle(screen, beat_color, (WIDTH//2, HEIGHT//2), int(beat_size))
     pygame.draw.circle(screen, WHITE, (WIDTH//2, HEIGHT//2), int(beat_size) + 4, 2)
-    
-    # Надпись о кликах перемещена ниже
-    rhythm_text = normal_font.render("Нажми ПРОБЕЛ в ритм!", True, WHITE)
-    screen.blit(rhythm_text, (WIDTH//2 - rhythm_text.get_width()//2, HEIGHT//2 + 40))
+
 
 def draw_relaxation():
     # Для фазы релаксации используем затемненный и размытый фон уровня
