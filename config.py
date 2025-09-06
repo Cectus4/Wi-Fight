@@ -1,5 +1,3 @@
-import pygame
-
 STAGES = {
     "MENU": 0,
     "LEVEL_SELECTION": 1,
@@ -14,23 +12,22 @@ HEIGHT = 720
 
 LEVELS = [
     {
-        "name": "Джуниор", 
-        "difficulty": 1, 
-        "boss_health": 100, 
-        "speed": 2
+        "NAME": "Джуниор", 
+        "DIFFICULTY": 1, 
+        "HEALTH": 100, 
+        "SPEED": 2
     },
     {
-        "name": "Миддл", 
-        "difficulty": 2, 
-        "boss_health": 150, 
-        "speed": 3
+        "NAME": "Миддл", 
+        "DIFFICULTY": 2, 
+        "HEALTH": 150, 
+        "SPEED": 3
     },
     {
-        "name": 
-        "Сеньор", 
-        "difficulty": 3, 
-        "boss_health": 200, 
-        "speed": 4
+        "NAME": "Сеньор", 
+        "DIFFICULTY": 3, 
+        "HEALTH": 200, 
+        "SPEED": 4
     }
 ]
 
