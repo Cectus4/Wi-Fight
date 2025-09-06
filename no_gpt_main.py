@@ -137,12 +137,21 @@ def draw_gameplay():
     if(current_level==0):
         screen.blit(junior_gameplay_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
         screen.blit(junior_enemy, (WIDTH/8*7-250, HEIGHT/6*2.75))
+        j = 0
     if(current_level==1):
         screen.blit(middle_gameplay_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
         screen.blit(middle_enemy, (WIDTH/8*7-250, HEIGHT/6*2.75))
+        j = 1
     if(current_level==2):
         screen.blit(senior_gameplay_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
         screen.blit(senior_enemy, (WIDTH/8*7-250, HEIGHT/6*2.75))
+        j = 2
+
+    pygame.draw.rect(screen, COLORS.get("BLACK"), (WIDTH/8*7-200, HEIGHT/6*2, 200, 40), border_radius=5)
+    pygame.draw.rect(screen, COLORS.get("RED"), (WIDTH/8*7-190, HEIGHT/6*2+10, 180*(enemy_health/LEVELS[j].get("HEALTH")), 20), border_radius=5)
+
+    pygame.draw.rect(screen, COLORS.get("BLACK"), (WIDTH/8*2-150, HEIGHT/6*2, 200, 40), border_radius=5)
+    pygame.draw.rect(screen, COLORS.get("RED"), (WIDTH/8*2-140, HEIGHT/6*2+10, 180*(player_health/100), 20), border_radius=5)
 
     shadow_surface = pygame.Surface((1280, 720), pygame.SRCALPHA)
     pygame.draw.ellipse(shadow_surface, COLORS.get("SHADOW_COLOR"), (WIDTH/8, HEIGHT/6*5.35, 200, 60))
@@ -168,6 +177,9 @@ def draw_gameplay():
         screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*i))
         i+=1
     
+    text = normal_font.render("COMBO: "+str(combo), True, COLORS.get("WHITE"))
+    screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*6))
+
     text = normal_font.render("STAMINA: "+str(stamina), True, COLORS.get("WHITE"))
     screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*7))
 
@@ -294,8 +306,6 @@ while(running):
     
     pygame.display.flip()
     clock.tick(60)
-
-
 
 pygame.quit()
 sys.exit()
