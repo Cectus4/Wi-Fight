@@ -2,9 +2,8 @@ STAGES = {
     "MENU": 0,
     "LEVEL_SELECTION": 1,
     "GAMEPLAY": 2,
-    "RELAXATION": 3,
-    "VICTORY": 4,
-    "DEFEAT": 5
+    "VICTORY": 3,
+    "DEFEAT": 4
 }
 
 WIDTH = 1280
@@ -59,3 +58,11 @@ PATHS = {
 TIMING = 0.2
 
 DAMAGE = 10
+
+GAME_NAME = "Wi-Fight"
+
+LABELS = {
+    "QUIT": "Выход",
+    "PLAY": "Играть",
+    "BACK": "Вернуться"
+}

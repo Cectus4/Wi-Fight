@@ -7,13 +7,13 @@ import math
 from pygame import mixer
 from config import *
 
-# Инициализация
+# Инициализация и переменные
 
 pygame.init()
 mixer.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Wi-Fight")
+pygame.display.set_caption(GAME_NAME)
 
 game_stage = STAGES.get("MENU")
 
@@ -44,7 +44,7 @@ current_offset_x, current_offset_y = 0, 0
 target_offset_x, target_offset_y = 0, 0
 last_beat_time = 0
 
-player_health = None
+player_health = 100
 enemy_health = None
 
 combo = 0
@@ -83,18 +83,18 @@ class Button:
             return True
         return False
 
-title_screen_quit_button = Button(705, HEIGHT//2 + 100, 300, 100, "Выйти", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
-title_screen_play_button = Button(275, HEIGHT//2 + 100, 300, 100, "Играть", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
+title_screen_quit_button = Button(705, HEIGHT//2 + 100, 300, 100, LABELS.get("QUIT"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
+title_screen_play_button = Button(275, HEIGHT//2 + 100, 300, 100, LABELS.get("PLAY"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 
 level_selection_screen_easy_button = Button(300, HEIGHT//2 + 100, 200, 100, LEVELS[0].get("NAME"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 level_selection_screen_medium_button = Button(540, HEIGHT//2 + 100, 200, 100, LEVELS[1].get("NAME"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 level_selection_screen_hard_button = Button(780, HEIGHT//2 + 100, 200, 100, LEVELS[2].get("NAME"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 
-gameplay_back_button = Button(20, 20, 90, 60, "Back", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
+gameplay_back_button = Button(20, 20, 90, 60, LABELS.get("BACK"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 
-end_back_button = Button(WIDTH/2-150, HEIGHT/3*2, 300, 100, "Back", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
+end_back_button = Button(WIDTH/2-150, HEIGHT/3*2.25, 300, 100, LABELS.get("BACK"), COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 
-binary_codes = []
+# бинарный код
 
 def create_binary_code():
     binary_text = "".join(random.choice(["0", "1"]) for _ in range(8))
@@ -102,16 +102,20 @@ def create_binary_code():
         "text": binary_text,
         "x": WIDTH/4,
         "y": HEIGHT/2,
-        "speed": 10
     })
+
+# создание теней
+
+def create_shadow(w, h, tw, th):
+    shadow_surface = pygame.Surface((1280, 720), pygame.SRCALPHA)
+    pygame.draw.rect(shadow_surface, COLORS.get("SHADOW_COLOR"), (w, h, tw, th), border_radius=15)
+    screen.blit(shadow_surface, (0, 0))
 
 # бит таймер)
 
 def draw_beat_timer():
 
-    shadow_surface = pygame.Surface((1280, 720), pygame.SRCALPHA)
-    pygame.draw.rect(shadow_surface, COLORS.get("SHADOW_COLOR"), (WIDTH/2-75, HEIGHT/2-75, 150, 150), border_radius=15)
-    screen.blit(shadow_surface, (0, 0))
+    create_shadow(WIDTH/2-75, HEIGHT/2-75, 150, 150)
 
     sin = math.sin(((current_time-last_beat_time)/(60/LEVELS[current_level].get("SPEED")*1000)) * math.pi)
     beat_size = 49 - 24 * sin
@@ -127,6 +131,9 @@ def draw_title_screen():
     screen.blit(title_screen_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
 
     title_text = title_font.render("Wi-Fight", True, COLORS.get("WHITE"))
+
+    create_shadow(WIDTH//2 - title_text.get_width()//2-20, HEIGHT/6-10, title_text.get_width()+40, title_text.get_height()+20)
+
     screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
     
     title_screen_quit_button.draw(screen)
@@ -139,28 +146,52 @@ def draw_level_selection():
     screen.blit(level_selection_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
 
     title_text = title_font.render("Выбери уровень:", True, COLORS.get("WHITE"))
+
+    create_shadow(WIDTH//2 - title_text.get_width()//2-20, HEIGHT/6-10, title_text.get_width()+40, title_text.get_height()+20)
+
     screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
 
     level_selection_screen_easy_button.draw(screen)
     level_selection_screen_medium_button.draw(screen)
     level_selection_screen_hard_button.draw(screen)
 
-# виктор)
+# не виктор((
 
 def draw_defeat():
 
     screen.blit(defeat_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
 
     title_text = title_font.render("Поражение((", True, COLORS.get("WHITE"))
+
+    create_shadow(WIDTH//2 - title_text.get_width()//2-20, HEIGHT/6-10, title_text.get_width()+40, title_text.get_height()+20)
+
     screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
 
-    end_back_button.draw(screen)
+    text = normal_font.render("Расслабьтесь: "+f"{(current_time-meditation_time)/1000:.1f}", True, COLORS.get("WHITE"))
+
+    create_shadow(WIDTH//2 - text.get_width()//2-20, HEIGHT/6*2.5-10, text.get_width()+40, text.get_height()+20)
+
+    screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/6*2.5))
+
+    create_shadow(WIDTH/2-75, HEIGHT//3*1.75-75, 150, 150)
+
+    sin = math.sin(((current_time-last_beat_time)/(60/30*1000)) * math.pi)
+    beat_size = 36 - 24 * sin
+    pygame.draw.circle(screen, COLORS.get("WHITE"), (WIDTH//2, HEIGHT//3*1.75), int(beat_size) + 4, 2)
+
+    if((current_time-meditation_time)/1000>15):
+        end_back_button.draw(screen)
+
+# виктор))
 
 def draw_victory():
 
     screen.blit(victory_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
 
     title_text = title_font.render("Победа!!", True, COLORS.get("WHITE"))
+
+    create_shadow(WIDTH//2 - title_text.get_width()//2-20, HEIGHT/6-10, title_text.get_width()+40, title_text.get_height()+20)
+
     screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
 
     end_back_button.draw(screen)
@@ -193,9 +224,7 @@ def draw_gameplay():
     pygame.draw.ellipse(shadow_surface, COLORS.get("SHADOW_COLOR"), (WIDTH/8*7-200, HEIGHT/6*5.35, 200, 60))
     screen.blit(shadow_surface, (0, 0))
 
-    shadow_surface = pygame.Surface((1280, 720), pygame.SRCALPHA)
-    pygame.draw.rect(shadow_surface, COLORS.get("SHADOW_COLOR"), (WIDTH/2-100, -25, 200, 225), border_radius=15)
-    screen.blit(shadow_surface, (0, 0))
+    create_shadow(WIDTH/2-100, -25, 200, 225)
 
     screen.blit(character, (WIDTH/8-65, HEIGHT/6*2.75))
 
@@ -213,7 +242,7 @@ def draw_gameplay():
         i+=1
     
     for code in binary_codes[:]:
-        code["x"] += code["speed"] 
+        code["x"] += 10
         if code["x"] > WIDTH: 
             binary_codes.remove(code)
 
@@ -228,7 +257,6 @@ def draw_gameplay():
     screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*7))
 
     draw_beat_timer()
-
 
 # процессы игровые
 
@@ -272,7 +300,6 @@ while(running):
                 pygame.mixer.music.load(PATHS.get("MUSIC")+"junior_music.mp3")
                 pygame.mixer.music.play()
                 game_stage = STAGES.get("GAMEPLAY")
-                player_health = 100
                 enemy_health = LEVELS[0].get("HEALTH")
                 current_level = 0
 
@@ -280,7 +307,6 @@ while(running):
                 pygame.mixer.music.load(PATHS.get("MUSIC")+"middle_music.mp3")
                 pygame.mixer.music.play()
                 game_stage = STAGES.get("GAMEPLAY")
-                player_health = 100
                 enemy_health = LEVELS[1].get("HEALTH")
                 current_level = 1
 
@@ -288,7 +314,6 @@ while(running):
                 pygame.mixer.music.load(PATHS.get("MUSIC")+"senior_music.mp3")
                 pygame.mixer.music.play()
                 game_stage = STAGES.get("GAMEPLAY")
-                player_health = 100
                 enemy_health = LEVELS[2].get("HEALTH")
                 current_level = 2
 
@@ -297,7 +322,7 @@ while(running):
             gameplay_back_button.check_hover(mouse_pos)
 
             if(gameplay_back_button.is_clicked(mouse_pos, event)):
-                player_health = None
+                player_health = 100
                 enemy_health = None
                 current_level = None
                 game_stage = STAGES.get("MENU")
@@ -311,7 +336,7 @@ while(running):
                     combo+=1
                     stamina=3
                     if(enemy_health==0):
-                        player_health = None
+                        player_health = 100
                         enemy_health = None
                         current_level = None
                         game_stage = STAGES.get("VICTORY")
@@ -323,30 +348,24 @@ while(running):
                     player_health-=DAMAGE
                     stamina-=1
                     if(stamina==0 or player_health==0):
-                        player_health = None
+                        player_health = 100
                         enemy_health = None
                         current_level = None
                         game_stage = STAGES.get("DEFEAT")
                         stamina=3
                         pygame.mixer.music.stop()
+                        meditation_time = current_time
 
         elif(game_stage == STAGES.get("DEFEAT")):
-
-            end_back_button.check_hover(mouse_pos)
-
-            if(end_back_button.is_clicked(mouse_pos, event)):
-                game_stage = STAGES.get("MENU")
+            if((current_time-meditation_time)/1000>15):
+                end_back_button.check_hover(mouse_pos)
+                if(end_back_button.is_clicked(mouse_pos, event)):
+                    game_stage = STAGES.get("MENU")
 
         elif(game_stage == STAGES.get("VICTORY")):
-
             end_back_button.check_hover(mouse_pos)
-
             if(end_back_button.is_clicked(mouse_pos, event)):
                 game_stage = STAGES.get("MENU")
-
-    if(game_stage == STAGES.get("GAMEPLAY")):
-        if(current_time-last_beat_time>(60/LEVELS[current_level].get("SPEED")*1000)):
-            last_beat_time = current_time
 
     if(game_stage == STAGES.get("DEFEAT")):
         draw_defeat()
@@ -357,6 +376,8 @@ while(running):
     if(game_stage == STAGES.get("LEVEL_SELECTION")):
         draw_level_selection()
     if(game_stage == STAGES.get("GAMEPLAY")):
+        if(current_time-last_beat_time>(60/LEVELS[current_level].get("SPEED")*1000)):
+            last_beat_time = current_time
         draw_gameplay()
     
     pygame.display.flip()
