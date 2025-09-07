@@ -32,6 +32,8 @@ junior_enemy = pygame.image.load(PATHS.get("ENEMIES")+'junior_enemy.png')
 middle_enemy = pygame.image.load(PATHS.get("ENEMIES")+'middle_enemy.png')
 senior_enemy = pygame.image.load(PATHS.get("ENEMIES")+'senior_enemy.png')
 
+victory_background_image = pygame.transform.scale(pygame.image.load(PATHS.get("BGS")+'victory_background.png').convert(), (1400, 800))
+defeat_background_image = pygame.transform.scale(pygame.image.load(PATHS.get("BGS")+'defeat_background.png').convert(), (1400, 800))
 title_screen_background_image = pygame.transform.scale(pygame.image.load(PATHS.get("BGS")+'title_screen_background.png').convert(), (1400, 800))
 level_selection_background_image = pygame.transform.scale(pygame.image.load(PATHS.get("BGS")+'level_selection_background.png').convert(), (1400, 800))
 junior_gameplay_background_image = pygame.transform.scale(pygame.image.load(PATHS.get("BGS")+'junior_gameplay_background.png').convert(), (1400, 800))
@@ -90,6 +92,19 @@ level_selection_screen_hard_button = Button(780, HEIGHT//2 + 100, 200, 100, LEVE
 
 gameplay_back_button = Button(20, 20, 90, 60, "Back", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
 
+end_back_button = Button(WIDTH/2-150, HEIGHT/3*2, 300, 100, "Back", COLORS.get("CHILL_RED"), COLORS.get("DARK_RED"))
+
+binary_codes = []
+
+def create_binary_code():
+    binary_text = "".join(random.choice(["0", "1"]) for _ in range(8))
+    binary_codes.append({
+        "text": binary_text,
+        "x": WIDTH/4,
+        "y": HEIGHT/2,
+        "speed": 10
+    })
+
 # бит таймер)
 
 def draw_beat_timer():
@@ -129,6 +144,26 @@ def draw_level_selection():
     level_selection_screen_easy_button.draw(screen)
     level_selection_screen_medium_button.draw(screen)
     level_selection_screen_hard_button.draw(screen)
+
+# виктор)
+
+def draw_defeat():
+
+    screen.blit(defeat_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
+
+    title_text = title_font.render("Поражение((", True, COLORS.get("WHITE"))
+    screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
+
+    end_back_button.draw(screen)
+
+def draw_victory():
+
+    screen.blit(victory_background_image, (-60 + bg_offset_x, -40 + bg_offset_y))
+
+    title_text = title_font.render("Победа!!", True, COLORS.get("WHITE"))
+    screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, HEIGHT/6))
+
+    end_back_button.draw(screen)
 
 # геймплей
 
@@ -177,6 +212,15 @@ def draw_gameplay():
         screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*i))
         i+=1
     
+    for code in binary_codes[:]:
+        code["x"] += code["speed"] 
+        if code["x"] > WIDTH: 
+            binary_codes.remove(code)
+
+    for code in binary_codes:
+        code_text = normal_font.render(code["text"], True, COLORS.get("GREEN"))
+        screen.blit(code_text, (code["x"], code["y"]))
+
     text = normal_font.render("COMBO: "+str(combo), True, COLORS.get("WHITE"))
     screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT/30*6))
 
@@ -262,6 +306,7 @@ while(running):
 
             if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
                 if(math.sin(((current_time-last_beat_time)/(60/LEVELS[current_level].get("SPEED")*1000)) * math.pi)<0.2):
+                    create_binary_code() 
                     enemy_health-=DAMAGE
                     combo+=1
                     stamina=3
@@ -269,7 +314,7 @@ while(running):
                         player_health = None
                         enemy_health = None
                         current_level = None
-                        game_stage = STAGES.get("MENU")
+                        game_stage = STAGES.get("VICTORY")
                         stamina=3
                         pygame.mixer.music.stop()
                         combo=0
@@ -277,26 +322,36 @@ while(running):
                     combo=0
                     player_health-=DAMAGE
                     stamina-=1
-                    if(stamina==0):
+                    if(stamina==0 or player_health==0):
                         player_health = None
                         enemy_health = None
                         current_level = None
-                        game_stage = STAGES.get("MENU")
+                        game_stage = STAGES.get("DEFEAT")
                         stamina=3
                         pygame.mixer.music.stop()
 
-                    elif(player_health==0):
-                        player_health = None
-                        enemy_health = None
-                        current_level = None
-                        game_stage = STAGES.get("MENU")
-                        stamina=3
-                        pygame.mixer.music.stop()
+        elif(game_stage == STAGES.get("DEFEAT")):
+
+            end_back_button.check_hover(mouse_pos)
+
+            if(end_back_button.is_clicked(mouse_pos, event)):
+                game_stage = STAGES.get("MENU")
+
+        elif(game_stage == STAGES.get("VICTORY")):
+
+            end_back_button.check_hover(mouse_pos)
+
+            if(end_back_button.is_clicked(mouse_pos, event)):
+                game_stage = STAGES.get("MENU")
 
     if(game_stage == STAGES.get("GAMEPLAY")):
         if(current_time-last_beat_time>(60/LEVELS[current_level].get("SPEED")*1000)):
             last_beat_time = current_time
 
+    if(game_stage == STAGES.get("DEFEAT")):
+        draw_defeat()
+    if(game_stage == STAGES.get("VICTORY")):
+        draw_victory()
     if(game_stage == STAGES.get("MENU")):
         draw_title_screen()
     if(game_stage == STAGES.get("LEVEL_SELECTION")):
